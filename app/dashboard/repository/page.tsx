@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ExternalLink, Star, Search } from "lucide-react";
 
 import { useRepositories } from "@/module/repository/hooks/use-repositories";
+import { useConnectRepository } from "@/module/repository/hooks/use-connect-repository";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,8 @@ const RepositoryPage = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useRepositories();
+
+  const { mutate: connectRepo } = useConnectRepository();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [connectingId, setConnectingId] = useState<number | null>(null);
@@ -98,7 +101,23 @@ const RepositoryPage = () => {
       repo.full_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const handleConnect = (repo: Repository) => {};
+  const handleConnect = (repo: Repository) => {
+    const [owner, repoName] = repo.full_name.split("/");
+    if (!owner || !repoName) return;
+
+    setConnectingId(repo.id);
+
+    connectRepo(
+      {
+        owner,
+        repo: repoName,
+        githubId: repo.id,
+      },
+      {
+        onSettled: () => setConnectingId(null),
+      },
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -189,7 +208,9 @@ const RepositoryPage = () => {
         })}
 
         {filteredRepositories.length === 0 && (
-          <div className="text-sm text-muted-foreground">No repositories found</div>
+          <div className="text-sm text-muted-foreground">
+            No repositories found
+          </div>
         )}
 
         <div ref={observerTarget} className="py-4">
