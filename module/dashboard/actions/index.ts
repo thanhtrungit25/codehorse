@@ -69,14 +69,12 @@ export async function getDashboardStats() {
 
     const { data: user } = await octokit.rest.users.getAuthenticated();
 
-    // TODO: FETCH TOTAL CONNECTED REPO FROM DB
-    // const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
-    //   affiliation: "owner",
-    //   per_page: 100,
-    // });
+    const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser({
+      affiliation: "owner",
+      per_page: 100,
+    });
 
-    // const totalRepos = repos.length;
-    const totalRepos = 30;
+    const totalRepos = repos.length;
 
     const calendar = await fetchUserContribution(token, user.login);
     const totalCommits = calendar?.totalContributions ?? 0;
