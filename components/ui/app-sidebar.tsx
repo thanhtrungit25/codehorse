@@ -23,7 +23,7 @@ import {
 } from "./dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { useTheme } from "next-themes";
-import Logout from "@/app/module/auth/components/logout";
+import Logout from "@/module/auth/components/logout";
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme();
