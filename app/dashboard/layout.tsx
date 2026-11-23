@@ -1,3 +1,8 @@
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { requireAuth } from "../module/auth/utils/auth-utils";
+import { AppSidebar } from "@/components/ui/app-sidebar";
+import { Separator } from "@/components/ui/separator";
+
 const AuthenticatedDashboard = async ({
   children,
 }: {
@@ -7,6 +12,8 @@ const AuthenticatedDashboard = async ({
   return (
     <div>
       <header className="flex h-16 shrink-0 items-center gap-2 border-4 px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mx-2 h-4" />
         <h1 className="text-xl font-semibold text-foreground">
           Dashboard
         </h1>
@@ -19,12 +26,17 @@ const AuthenticatedDashboard = async ({
   )
 }
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+  await requireAuth();
   return (
-    <AuthenticatedDashboard>
-        {children}
-    </AuthenticatedDashboard>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <AuthenticatedDashboard>
+          {children}
+        </AuthenticatedDashboard>
+      </SidebarInset>
+    </SidebarProvider>
   )
 };
 
